@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.demo</groupId>
 	<artifactId>ad.mediation</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>ad.mediation</name>
 	<description>Demo AdMediation project</description>
 
@@ -65,6 +65,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
