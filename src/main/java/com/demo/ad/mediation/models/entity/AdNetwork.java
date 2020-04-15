@@ -1,15 +1,13 @@
-package com.demo.ad.mediation.models;
+package com.demo.ad.mediation.models.entity;
 
+import com.demo.ad.mediation.models.dto.AdNetworkDTO;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
@@ -25,17 +23,18 @@ public class AdNetwork {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long entityId;
 
-    private @NotNull String networkId;
+    @Column(unique = true)
+    private String networkId;
 
     private @NotNull String name;
 
     private @NotNull Long score;
 
     @CreatedDate @Builder.Default
-    private LocalDateTime dateCreated = LocalDateTime.now();
+    private final LocalDateTime dateCreated = LocalDateTime.now();
 
     @LastModifiedDate @Builder.Default
-    private LocalDateTime dateUpdated = LocalDateTime.now();
+    private final LocalDateTime dateUpdated = LocalDateTime.now();
 
     public static AdNetwork withUpdatedPriority(AdNetwork adNetwork, Long newScore) {
         return AdNetwork.builder()

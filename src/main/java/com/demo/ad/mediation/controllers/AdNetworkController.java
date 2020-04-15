@@ -1,11 +1,12 @@
 package com.demo.ad.mediation.controllers;
 
-import com.demo.ad.mediation.models.AdNetwork;
+import com.demo.ad.mediation.models.dto.AdNetworkDTO;
 import com.demo.ad.mediation.services.AdNetworkService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/")
@@ -18,19 +19,29 @@ public class AdNetworkController {
     }
 
     @GetMapping("/")
-    public List<AdNetwork> read() {
-        return adNetworkService.findAll();
+    public ResponseEntity<List<AdNetworkDTO>> read() {
+        return ResponseEntity.ok(adNetworkService.findAll());
+    }
+
+    @GetMapping("/{networkId}")
+    public ResponseEntity<AdNetworkDTO> findByNetworkId(@PathVariable("networkId") String networkId) {
+        Optional<AdNetworkDTO> entity = adNetworkService.findByNetworkId(networkId);
+        return entity.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/")
-    public ResponseEntity<AdNetwork> create(@RequestBody AdNetwork adNetwork) {
-        AdNetwork createdNetwork = adNetworkService.create(adNetwork);
+    public ResponseEntity<AdNetworkDTO> create(@RequestBody AdNetworkDTO adNetworkDTO) {
+        AdNetworkDTO createdNetwork = adNetworkService.create(adNetworkDTO);
         return ResponseEntity.ok(createdNetwork);
     }
 
     @PutMapping("/")
-    public ResponseEntity<AdNetwork> update(@RequestBody AdNetwork adNetwork) {
-        AdNetwork updatedNetwork = adNetworkService.update(adNetwork);
-        return ResponseEntity.ok(updatedNetwork);
+    public ResponseEntity<AdNetworkDTO> update(@RequestBody AdNetworkDTO adNetworkEntity) {
+        Optional<AdNetworkDTO> updatedNetwork = adNetworkService.update(adNetworkEntity);
+        if (updatedNetwork.isPresent()) {
+            return ResponseEntity.ok(updatedNetwork.get());
+        } else {
+            return ResponseEntity.status(400).build();
+        }
     }
 }
