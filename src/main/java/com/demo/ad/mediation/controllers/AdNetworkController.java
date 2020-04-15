@@ -2,15 +2,14 @@ package com.demo.ad.mediation.controllers;
 
 import com.demo.ad.mediation.models.AdNetwork;
 import com.demo.ad.mediation.services.AdNetworkService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/")
-public class AdNetworkController extends AdNetworkService {
+public class AdNetworkController {
 
     private final AdNetworkService adNetworkService;
 
@@ -20,6 +19,18 @@ public class AdNetworkController extends AdNetworkService {
 
     @GetMapping("/")
     public List<AdNetwork> read() {
-        return adNetworkService.readAll();
+        return adNetworkService.findAll();
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<AdNetwork> create(@RequestBody AdNetwork adNetwork) {
+        AdNetwork createdNetwork = adNetworkService.create(adNetwork);
+        return ResponseEntity.ok(createdNetwork);
+    }
+
+    @PutMapping("/")
+    public ResponseEntity<AdNetwork> update(@RequestBody AdNetwork adNetwork) {
+        AdNetwork updatedNetwork = adNetworkService.update(adNetwork);
+        return ResponseEntity.ok(updatedNetwork);
     }
 }
