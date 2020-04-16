@@ -1,9 +1,7 @@
 package com.demo.ad.mediation.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.Accessors;
 import org.apache.commons.lang3.Validate;
 
 import java.time.LocalDateTime;

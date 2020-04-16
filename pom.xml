@@ -82,8 +82,8 @@
 				<artifactId>appengine-maven-plugin</artifactId>
 				<version>2.2.0</version>
 				<configuration>
-					<projectId>GCLOUD_CONFIG</projectId>
-					<version>springboot-helloworld</version>
+					<projectId>ad-mediation-demo</projectId>
+					<version>v1</version>
 				</configuration>
 			</plugin>
 		</plugins>

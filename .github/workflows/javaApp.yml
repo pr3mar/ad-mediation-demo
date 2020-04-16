@@ -1,6 +1,9 @@
 name: Build a Java Maven project
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   compile:
@@ -31,8 +34,13 @@ jobs:
           java-version: 11
       - name: Build and test project
         run: mvn -f pom.xml clean verify
-      - name: Upload Maven build artifact
-        uses: actions/upload-artifact@v1
+      - name: Setup gcloud
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
-          name: artifact
-          path: target/ad.mediation.jar
+          version: '286.0.0'
+          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.PROJECT_ID }}
+      - name: Publish to GAE
+        run: |
+          mvn -f pom.xml package appengine:deploy -Dapp.deploy.projectId=${{ secrets.PROJECT_ID }}

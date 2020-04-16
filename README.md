@@ -6,7 +6,7 @@
 ## Setup
 
 ```shell script
-mvn clean package appengine:deploy 
+mvn clean verify
 ```
 
 ## Description
