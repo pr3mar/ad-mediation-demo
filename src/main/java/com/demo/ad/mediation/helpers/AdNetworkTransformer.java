@@ -1,4 +1,4 @@
-package com.demo.ad.mediation.components;
+package com.demo.ad.mediation.helpers;
 
 import com.demo.ad.mediation.models.dto.AdNetworkDTO;
 import com.demo.ad.mediation.models.entity.AdNetwork;
@@ -9,7 +9,7 @@ public class AdNetworkTransformer implements Transformer<AdNetwork, AdNetworkDTO
     @Override
     public AdNetworkDTO toBean(AdNetwork entity) {
         return AdNetworkDTO.builder()
-                .networkId(entity.networkId())
+                .externalId(entity.externalId())
                 .name(entity.name())
                 .score(entity.score())
                 .dateCreated(entity.dateCreated())
@@ -21,7 +21,7 @@ public class AdNetworkTransformer implements Transformer<AdNetwork, AdNetworkDTO
     public AdNetwork toEntity(AdNetworkDTO bean) {
         bean.validate();
         return AdNetwork.builder()
-                .networkId(bean.getNetworkId())
+                .externalId(bean.getExternalId())
                 .name(bean.getName())
                 .score(bean.getScore())
                 .build();

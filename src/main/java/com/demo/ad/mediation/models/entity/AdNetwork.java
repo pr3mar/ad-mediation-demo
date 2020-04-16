@@ -1,7 +1,6 @@
 package com.demo.ad.mediation.models.entity;
 
 import com.demo.ad.mediation.models.dto.AdNetworkDTO;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.CreatedDate;
@@ -12,34 +11,38 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Accessors(fluent = true)
+@Builder
 @ToString
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class AdNetwork {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long entityId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
     @Column(unique = true)
-    private String networkId;
+    private String externalId;
 
-    private @NotNull String name;
+    @NotNull
+    private String name;
 
-    private @NotNull Long score;
+    @NotNull
+    private Long score;
 
-    @CreatedDate @Builder.Default
+    @Builder.Default
+    @CreatedDate
     private final LocalDateTime dateCreated = LocalDateTime.now();
 
-    @LastModifiedDate @Builder.Default
+    @Builder.Default
+    @LastModifiedDate
     private final LocalDateTime dateUpdated = LocalDateTime.now();
 
     public static AdNetwork withUpdatedNameOrPriority(AdNetwork adNetwork, AdNetworkDTO adNetworkDTO) {
         return AdNetwork.builder()
-                .entityId(adNetwork.entityId)
-                .networkId(adNetwork.networkId)
+                .id(adNetwork.id)
+                .externalId(adNetwork.externalId)
                 .name(adNetworkDTO.getName())
                 .score(adNetworkDTO.getScore())
                 .dateCreated(adNetwork.dateCreated)
@@ -48,6 +51,6 @@ public class AdNetwork {
     }
 
     public boolean compareToDTO(AdNetworkDTO dto) {
-        return this.name.equals(dto.getName()) && this.networkId.equals(dto.getNetworkId()) && this.score.equals(dto.getScore());
+        return this.name.equals(dto.getName()) && this.externalId.equals(dto.getExternalId()) && this.score.equals(dto.getScore());
     }
 }

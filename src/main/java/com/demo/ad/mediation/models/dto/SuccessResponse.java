@@ -1,9 +1,11 @@
 package com.demo.ad.mediation.models.dto;
 
-import lombok.Data;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
-@Data
+@Value
+@Builder
 @RequiredArgsConstructor
 public class SuccessResponse {
     private final long rowsAffected;

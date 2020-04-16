@@ -1,4 +1,4 @@
-package com.demo.ad.mediation.components;
+package com.demo.ad.mediation.helpers;
 
 import java.util.List;
 

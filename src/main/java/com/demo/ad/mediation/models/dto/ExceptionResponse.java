@@ -1,9 +1,9 @@
 package com.demo.ad.mediation.models.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Value;
 
-@Data
+@Value
 @AllArgsConstructor
 public class ExceptionResponse {
     private int status;
