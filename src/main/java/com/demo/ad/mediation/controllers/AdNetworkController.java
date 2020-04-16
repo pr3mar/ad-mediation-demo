@@ -1,47 +1,62 @@
 package com.demo.ad.mediation.controllers;
 
 import com.demo.ad.mediation.models.dto.AdNetworkDTO;
+import com.demo.ad.mediation.models.entity.AdNetwork;
 import com.demo.ad.mediation.services.AdNetworkService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/")
-public class AdNetworkController {
+@RequestMapping("/networks")
+@Slf4j
+@RequiredArgsConstructor
+public class AdNetworkController extends AbstractController {
 
     private final AdNetworkService adNetworkService;
 
-    public AdNetworkController(AdNetworkService adNetworkService) {
-        this.adNetworkService = adNetworkService;
-    }
-
-    @GetMapping("/")
+    @GetMapping(value = "/all", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AdNetworkDTO>> read() {
         return ResponseEntity.ok(adNetworkService.findAll());
     }
 
-    @GetMapping("/{networkId}")
+    @GetMapping(value = "/{networkId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<AdNetworkDTO> findByNetworkId(@PathVariable("networkId") String networkId) {
-        Optional<AdNetworkDTO> entity = adNetworkService.findByNetworkId(networkId);
-        return entity.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        AdNetworkDTO dto = adNetworkService.findByNetworkId(networkId);
+        return ResponseEntity.ok(dto);
     }
 
-    @PostMapping("/")
+    @PostMapping(value = "/create", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<AdNetworkDTO> create(@RequestBody AdNetworkDTO adNetworkDTO) {
         AdNetworkDTO createdNetwork = adNetworkService.create(adNetworkDTO);
         return ResponseEntity.ok(createdNetwork);
     }
 
-    @PutMapping("/")
-    public ResponseEntity<AdNetworkDTO> update(@RequestBody AdNetworkDTO adNetworkEntity) {
-        Optional<AdNetworkDTO> updatedNetwork = adNetworkService.update(adNetworkEntity);
-        if (updatedNetwork.isPresent()) {
-            return ResponseEntity.ok(updatedNetwork.get());
-        } else {
-            return ResponseEntity.status(400).build();
-        }
+    @PostMapping(value = "/create/bulk", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<AdNetworkDTO>> create(@RequestBody List<AdNetworkDTO> adNetworkDTOs) {
+        List<AdNetworkDTO> createdNetwork = adNetworkService.bulkCreate(adNetworkDTOs);
+        return ResponseEntity.ok(createdNetwork);
+    }
+
+    @PutMapping(value = "/update/{networkId}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<AdNetworkDTO> updateById(@PathVariable("networkId") String networkId, @RequestBody AdNetworkDTO adNetworkEntity) {
+        AdNetworkDTO updatedNetwork = adNetworkService.update(networkId, adNetworkEntity);
+        return ResponseEntity.ok(updatedNetwork);
+    }
+    @PutMapping(value = "/update/{networkId}/score/{score}", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<AdNetworkDTO> updatePriorityById(@PathVariable("networkId") String networkId, @PathVariable("score") long score) {
+        AdNetworkDTO updatedNetwork = adNetworkService.updateScore(networkId, score);
+        return ResponseEntity.ok(updatedNetwork);
+    }
+
+    @PutMapping(value = "/update", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<AdNetworkDTO>> updateAll(@RequestBody List<AdNetworkDTO> adNetworkEntity) {
+        List<AdNetworkDTO> updatedNetwork = adNetworkService.updateAll(adNetworkEntity);
+        return ResponseEntity.ok(updatedNetwork);
     }
 }

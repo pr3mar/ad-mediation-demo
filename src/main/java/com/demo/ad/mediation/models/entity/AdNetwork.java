@@ -36,14 +36,18 @@ public class AdNetwork {
     @LastModifiedDate @Builder.Default
     private final LocalDateTime dateUpdated = LocalDateTime.now();
 
-    public static AdNetwork withUpdatedPriority(AdNetwork adNetwork, Long newScore) {
+    public static AdNetwork withUpdatedNameOrPriority(AdNetwork adNetwork, AdNetworkDTO adNetworkDTO) {
         return AdNetwork.builder()
                 .entityId(adNetwork.entityId)
                 .networkId(adNetwork.networkId)
-                .name(adNetwork.name)
-                .score(newScore)
+                .name(adNetworkDTO.name())
+                .score(adNetworkDTO.score())
                 .dateCreated(adNetwork.dateCreated)
                 .dateUpdated(LocalDateTime.now())
                 .build();
+    }
+
+    public boolean compareToDTO(AdNetworkDTO dto) {
+        return this.name.equals(dto.name()) && this.networkId.equals(dto.networkId()) && this.score.equals(dto.score());
     }
 }
