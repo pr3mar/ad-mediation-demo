@@ -40,14 +40,14 @@ public class AdNetwork {
         return AdNetwork.builder()
                 .entityId(adNetwork.entityId)
                 .networkId(adNetwork.networkId)
-                .name(adNetworkDTO.name())
-                .score(adNetworkDTO.score())
+                .name(adNetworkDTO.getName())
+                .score(adNetworkDTO.getScore())
                 .dateCreated(adNetwork.dateCreated)
                 .dateUpdated(LocalDateTime.now())
                 .build();
     }
 
     public boolean compareToDTO(AdNetworkDTO dto) {
-        return this.name.equals(dto.name()) && this.networkId.equals(dto.networkId()) && this.score.equals(dto.score());
+        return this.name.equals(dto.getName()) && this.networkId.equals(dto.getNetworkId()) && this.score.equals(dto.getScore());
     }
 }

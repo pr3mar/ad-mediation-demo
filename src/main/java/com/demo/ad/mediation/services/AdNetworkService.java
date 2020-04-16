@@ -1,6 +1,7 @@
 package com.demo.ad.mediation.services;
 
 import com.demo.ad.mediation.models.dto.AdNetworkDTO;
+import com.demo.ad.mediation.models.dto.SuccessResponse;
 import com.demo.ad.mediation.models.entity.AdNetwork;
 import com.demo.ad.mediation.repositories.AdNetworkRepository;
 import com.demo.ad.mediation.components.AdNetworkTransformer;
@@ -10,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class AdNetworkService {
+    private static final String OPERATION_BULK_UPDATE = "bulk-update";
+    private static final String OPERATION_BULK_INSERT = "bulk-insert";
 
     private final AdNetworkRepository repository;
     private final AdNetworkTransformer transformer;
@@ -51,9 +53,10 @@ public class AdNetworkService {
     }
 
     @Transactional
-    public List<AdNetworkDTO> bulkCreate(List<AdNetworkDTO> adNetworkDTO) {
-        List<AdNetwork> entity = transformer.toEntity(adNetworkDTO);
-        return transformer.toBean(repository.saveAll(entity));
+    public SuccessResponse bulkCreate(List<AdNetworkDTO> adNetworkDTO) {
+        List<AdNetwork> entities = transformer.toEntity(adNetworkDTO);
+        List<AdNetworkDTO> beans = transformer.toBean(repository.saveAll(entities));
+        return new SuccessResponse(beans.size(), OPERATION_BULK_INSERT);
     }
 
     @Transactional
@@ -61,37 +64,39 @@ public class AdNetworkService {
         Optional<AdNetwork> adNetworkOptional = repository.findByNetworkId(networkId);
         if (adNetworkOptional.isPresent()) {
             if (repository.updateScoreForNetworkId(networkId, score) == 1) {
-                return transformer.toBean(adNetworkOptional.get()).score(score);
+                AdNetworkDTO bean = transformer.toBean(adNetworkOptional.get());
+                bean.setScore(score);
+                return bean;
             }
         }
         throw new EntityNotFoundException();
     }
 
     @Transactional
-    public AdNetworkDTO update(String networkId, AdNetworkDTO adNetworkDTO) {
-        return update(AdNetworkDTO.builder()
+    public AdNetworkDTO updateInstance(String networkId, AdNetworkDTO adNetworkDTO) {
+        return updateInstance(AdNetworkDTO.builder()
                 .networkId(networkId)
-                .name(adNetworkDTO.name())
-                .score(adNetworkDTO.score())
+                .name(adNetworkDTO.getName())
+                .score(adNetworkDTO.getScore())
                 .build().validate());
     }
 
     @Transactional
-    public List<AdNetworkDTO> updateAll(List<AdNetworkDTO> networkDTOS) {
-        List<String> networkIds = networkDTOS.stream().map(AdNetworkDTO::networkId).collect(Collectors.toList());
+    public SuccessResponse updateAll(List<AdNetworkDTO> networkDTOS) {
+        List<String> networkIds = networkDTOS.stream().map(AdNetworkDTO::getNetworkId).collect(Collectors.toList());
         Long numEntities = repository.countByNetworkIds(networkIds);
-        if (numEntities == networkDTOS.size()) {
-            return networkDTOS.stream().map(networkDTO -> {
-                networkDTO.validate();
-                return this.update(networkDTO);
-            }).collect(Collectors.toList());
-        } else {
+        if (numEntities != networkDTOS.size()) {
             throw new EntityNotFoundException("Some of the provided entities are missing. Try creating it?");
         }
+        long affectedRows = networkDTOS.stream().map(networkDTO -> {
+            networkDTO.validate();
+            return this.updateInstance(networkDTO);
+        }).count();
+        return new SuccessResponse(affectedRows, OPERATION_BULK_UPDATE);
     }
 
-    private AdNetworkDTO update(AdNetworkDTO adNetworkDTO) {
-        List<AdNetwork> entities = repository.findByNetworkIds(Collections.singletonList(adNetworkDTO.networkId()));
+    private AdNetworkDTO updateInstance(AdNetworkDTO adNetworkDTO) {
+        List<AdNetwork> entities = repository.findByNetworkIds(Collections.singletonList(adNetworkDTO.getName()));
         if (entities.isEmpty()) {
             throw new EntityNotFoundException();
         }

@@ -1,7 +1,7 @@
 package com.demo.ad.mediation.controllers;
 
 import com.demo.ad.mediation.models.dto.AdNetworkDTO;
-import com.demo.ad.mediation.models.entity.AdNetwork;
+import com.demo.ad.mediation.models.dto.SuccessResponse;
 import com.demo.ad.mediation.services.AdNetworkService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,16 +38,17 @@ public class AdNetworkController extends AbstractController {
     }
 
     @PostMapping(value = "/create/bulk", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<AdNetworkDTO>> create(@RequestBody List<AdNetworkDTO> adNetworkDTOs) {
-        List<AdNetworkDTO> createdNetwork = adNetworkService.bulkCreate(adNetworkDTOs);
-        return ResponseEntity.ok(createdNetwork);
+    public ResponseEntity<SuccessResponse> create(@RequestBody List<AdNetworkDTO> adNetworkDTOs) {
+        SuccessResponse successResponse = adNetworkService.bulkCreate(adNetworkDTOs);
+        return ResponseEntity.ok(successResponse);
     }
 
     @PutMapping(value = "/update/{networkId}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<AdNetworkDTO> updateById(@PathVariable("networkId") String networkId, @RequestBody AdNetworkDTO adNetworkEntity) {
-        AdNetworkDTO updatedNetwork = adNetworkService.update(networkId, adNetworkEntity);
+        AdNetworkDTO updatedNetwork = adNetworkService.updateInstance(networkId, adNetworkEntity);
         return ResponseEntity.ok(updatedNetwork);
     }
+
     @PutMapping(value = "/update/{networkId}/score/{score}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<AdNetworkDTO> updatePriorityById(@PathVariable("networkId") String networkId, @PathVariable("score") long score) {
         AdNetworkDTO updatedNetwork = adNetworkService.updateScore(networkId, score);
@@ -55,8 +56,8 @@ public class AdNetworkController extends AbstractController {
     }
 
     @PutMapping(value = "/update", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<AdNetworkDTO>> updateAll(@RequestBody List<AdNetworkDTO> adNetworkEntity) {
-        List<AdNetworkDTO> updatedNetwork = adNetworkService.updateAll(adNetworkEntity);
-        return ResponseEntity.ok(updatedNetwork);
+    public ResponseEntity<SuccessResponse> updateAll(@RequestBody List<AdNetworkDTO> adNetworkEntity) {
+        SuccessResponse successResponse = adNetworkService.updateAll(adNetworkEntity);
+        return ResponseEntity.ok(successResponse);
     }
 }

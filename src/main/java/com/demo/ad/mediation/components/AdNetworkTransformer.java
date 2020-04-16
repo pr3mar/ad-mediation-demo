@@ -21,9 +21,9 @@ public class AdNetworkTransformer implements Transformer<AdNetwork, AdNetworkDTO
     public AdNetwork toEntity(AdNetworkDTO bean) {
         bean.validate();
         return AdNetwork.builder()
-                .networkId(bean.networkId())
-                .name(bean.name())
-                .score(bean.score())
+                .networkId(bean.getNetworkId())
+                .name(bean.getName())
+                .score(bean.getScore())
                 .build();
     }
 }

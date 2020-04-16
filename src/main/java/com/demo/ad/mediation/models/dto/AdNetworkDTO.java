@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-@Accessors(fluent = true)
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class AdNetworkDTO {
 
     private String networkId;
