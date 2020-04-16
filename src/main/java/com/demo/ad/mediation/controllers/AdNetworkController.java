@@ -20,6 +20,11 @@ public class AdNetworkController extends AbstractController {
 
     private final AdNetworkService adNetworkService;
 
+    @GetMapping(value = "/", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<SuccessResponse> helloWorld() {
+        return ResponseEntity.ok(new SuccessResponse(0, "hello-world"));
+    }
+
     @GetMapping(value = "/all", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AdNetworkDTO>> read() {
         return ResponseEntity.ok(adNetworkService.findAll());
