@@ -26,7 +26,13 @@ public class AdNetworkDTO {
         Validate.notNull(externalId, "Please provide an ID for the AdNetwork.");
         Validate.notNull(name, "Please provide an AdNetwork name.");
         Validate.notNull(score, "Please provide the score.");
+
+        Validate.isTrue(externalId.length() < 32, "The length of the external ID must be < 32");
+        Validate.isTrue(!externalId.equals(""), "The external ID cannot be empty");
+
         Validate.isTrue(!name.equals(""), "The name cannot be empty.");
+        Validate.isTrue(name.length() < 64, "The length of the name must be < 64");
+
         Validate.isTrue(score >= 0, "The score must be >= 0.");
         return this;
     }

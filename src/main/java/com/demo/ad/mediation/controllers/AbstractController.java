@@ -29,7 +29,7 @@ public abstract class AbstractController {
         );
     }
 
-    @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class, DataIntegrityViolationException.class})
+    @ExceptionHandler({NullPointerException.class, IllegalArgumentException.class})
     @ResponseBody
     public ResponseEntity<ExceptionResponse> validationHandler(Exception e) {
         e.printStackTrace();
