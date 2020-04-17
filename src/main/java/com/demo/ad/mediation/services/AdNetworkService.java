@@ -44,6 +44,10 @@ public class AdNetworkService {
         );
     }
 
+    public List<String> findAllSlim(int pageNumber, int pageSize) {
+        return findAll(pageNumber, pageSize).stream().map(AdNetworkDTO::getExternalId).collect(Collectors.toList());
+    }
+
     public AdNetworkDTO findByExternalId(String id) {
         Optional<AdNetwork> networkOption = repository.findByExternalId(id);
         AdNetwork network = networkOption.orElseThrow(() -> new AdNetworkNotFoundException("Ad network with ID " + id + " could not be found."));

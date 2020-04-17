@@ -20,8 +20,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class AdNetworkController extends AbstractController {
 
     private final AdNetworkService adNetworkService;
-    private final int DEFAULT_PAGE = 0;
-    private final int DEFAULT_PAGE_SIZE = 100;
+    private final String DEFAULT_PAGE = "0";
+    private final String DEFAULT_PAGE_SIZE = "100";
 
     @GetMapping(value = "/", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<SuccessResponse> helloWorld() {
@@ -30,32 +30,23 @@ public class AdNetworkController extends AbstractController {
     }
 
     @GetMapping(value = "/all", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<AdNetworkDTO>> read() {
-        return ResponseEntity.ok(findAllAndLog(DEFAULT_PAGE, DEFAULT_PAGE_SIZE));
-    }
-
-    @GetMapping(value = "/all/{page}", produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AdNetworkDTO>> read(
-        @PathVariable(value = "page", required = false) Optional<Integer> pageOption
+        @RequestParam(value = "page", required = false, defaultValue = DEFAULT_PAGE) Integer page,
+        @RequestParam(value = "pageSize", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize
     ) {
-        int page = pageOption.orElse(DEFAULT_PAGE);
-        return ResponseEntity.ok(findAllAndLog(page, DEFAULT_PAGE_SIZE));
-    }
-
-    @GetMapping(value = "/all/{page}/{pageSize}", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<AdNetworkDTO>> read(
-        @PathVariable(value = "page", required = false) Optional<Integer> pageOption,
-        @PathVariable(value = "pageSize", required = false) Optional<Integer> pageSizeOption
-    ) {
-        int page = pageOption.orElse(DEFAULT_PAGE);
-        int pageSize = pageSizeOption.orElse(DEFAULT_PAGE_SIZE);
-        return ResponseEntity.ok(findAllAndLog(page, pageSize));
-    }
-
-    private List<AdNetworkDTO> findAllAndLog(int page, int pageSize) {
         List<AdNetworkDTO> dtos = adNetworkService.findAll(page, pageSize);
         log.info("Loaded {} networks successfully.", dtos.size());
-        return dtos;
+        return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping(value = "/list", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> readSlim(
+        @RequestParam(value = "page", required = false, defaultValue = DEFAULT_PAGE) Integer page,
+        @RequestParam(value = "pageSize", required = false, defaultValue = DEFAULT_PAGE_SIZE) Integer pageSize
+    ) {
+        List<String> ids = adNetworkService.findAllSlim(page, pageSize);
+        log.info("Loaded {} network IDs successfully.", ids.size());
+        return ResponseEntity.ok(ids);
     }
 
     @GetMapping(value = "/{externalId}", produces = APPLICATION_JSON_VALUE)
