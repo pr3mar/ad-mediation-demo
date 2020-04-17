@@ -4,4 +4,5 @@ service: default
 
 env_variables:
   JAVA_TOOL_OPTIONS: "-XX:MaxRAM=256m -XX:ActiveProcessorCount=2 -Xmx32m"
+  SPRING_PROFILES_ACTIVE: "gcp,mysql"
 # https://stackoverflow.com/questions/35416319/how-to-set-automatic-scaling-in-google-cloud-managed-vm
