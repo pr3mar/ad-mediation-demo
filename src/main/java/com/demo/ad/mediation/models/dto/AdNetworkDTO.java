@@ -41,7 +41,7 @@ public class AdNetworkDTO {
         return AdNetworkDTO.builder()
                 .externalId(this.getExternalId())
                 .name(this.getName())
-                .score(this.getScore())
+                .score(score)
                 .dateCreated(this.getDateCreated())
                 .dateUpdated(this.getDateUpdated())
                 .build();

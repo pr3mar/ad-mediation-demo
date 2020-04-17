@@ -27,7 +27,6 @@ public class AdNetworkService {
     private final AdNetworkTransformer transformer;
 
     public List<AdNetworkDTO> findAll(int pageNumber, int pageSize) {
-        log.error("page number = {}, page size = {}, check {}", pageNumber, pageSize, pageNumber < 0);
         Validate.isTrue(pageNumber >= 0, "Please provide a page number >= 0");
         Validate.isTrue(pageSize >= 0 && pageSize <= 1000, "Please provide a page size on the interval 0 <= pageSize <= 1000");
         return transformer.toBean(
@@ -66,6 +65,7 @@ public class AdNetworkService {
 
     @Transactional
     public AdNetworkDTO updateScore(String externalId, long score) {
+        Validate.isTrue(score >= 0, "The score must be >= 0.");
         Optional<AdNetwork> adNetworkOptional = repository.findByExternalId(externalId);
         AdNetwork entity = adNetworkOptional.orElseThrow(() -> new AdNetworkNotFoundException("Ad network with ID " + externalId + " could not be found."));
         if (repository.updateScoreForExternalId(externalId, score) == 1) {
@@ -91,20 +91,23 @@ public class AdNetworkService {
         if (numEntities != networkDTOS.size()) {
             throw new AdNetworkNotFoundException("Some of the provided entities could not be found in the database. Try creating it first?");
         }
-        long affectedRows = networkDTOS.stream().map(networkDTO -> {
-            networkDTO.validate();
-            return this.updateInstance(networkDTO);
-        }).count();
+        long affectedRows = 0;
+        for (AdNetworkDTO networkDTO: networkDTOS) {
+            updateInstance(networkDTO.validate());
+            affectedRows++;
+        }
         return SuccessResponseFactory.buildSuccessfulUpdate(affectedRows);
     }
 
     private AdNetworkDTO updateInstance(AdNetworkDTO adNetworkDTO) {
+        log.info("Updating {}", adNetworkDTO);
         Optional<AdNetwork> entityOption = repository.findByExternalId(adNetworkDTO.getExternalId());
         AdNetwork entity = entityOption.orElseThrow(() -> new AdNetworkNotFoundException("Ad network with ID " + adNetworkDTO.getExternalId() + " could not be found."));
         if (!entity.compareToDTO(adNetworkDTO)) {
             AdNetwork saved = repository.save(AdNetwork.withUpdatedNameOrPriority(entity, adNetworkDTO));
             return transformer.toBean(saved);
         }
+        log.error("Entity {} not updated!", entity);
         return adNetworkDTO;
     }
 }
